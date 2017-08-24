@@ -10,17 +10,16 @@
     <style>
         body {
             text-align: center;
-            width: 90%;
             margin: auto;
-
+            display: flex;
             font-family: Calibri, sans-serif;
             font-size: 2em;
             background-color: #dedede;
-
+            height: 100vh;
+            margin: 0;
         }
         #home {
-            margin-top: 20px;
-            padding: 20px 40px 40px 40px;
+            flex: 1;
             border-radius: 4px;
             background: #22c1c3; /* fallback for old browsers */
             background: -webkit-linear-gradient(to right, #fdbb2d, #22c1c3); /* Chrome 10-25, Safari 5.1-6 */
@@ -33,6 +32,7 @@
         }
         #screen {
             display: none;
+            flex: 1;
         }
         #msg {
         }
@@ -84,6 +84,13 @@
         setTimeout(animate2Screen, 200);
     });
 
+    var playScreen  = document.getElementById('screen');
+    var hammertime2 = new Hammer(playScreen);
+    hammertime2.on('panright', function (ev) {
+        document.getElementById("screen").className = "animated fadeOutRight";
+        setTimeout(animate1Screen, 200);
+    });
+
     var animate2Screen = function () {
         document.getElementById('home').style.display = "none";
         document.getElementById('screen').style.display = "block";
@@ -91,25 +98,36 @@
         setTimeout(animatePersonImage, 400);
 
     }
+    var animate1Screen = function () {
+        document.getElementById('screen').style.display = "none";
+        document.getElementById('home').style.display = "block";
+        document.getElementById('home').className = "animated fadeInLeft";
+
+    }
+
     var animatePersonImage = function () {
         document.getElementById('person-img').className = "animated pulse";
     }
 
-    var totalShake = 0;
+    var totalShake = 0, resetCounter = 0;
 
     var shakeEvent = new Shake({threshold: 15});
     shakeEvent.start();
     window.addEventListener('shake', function () {
-        if(totalShake === 3){
+        totalShake++;
+        resetCounter++;
+        if(resetCounter === 25){
             document.getElementById('person-img').className = "animated shake";
             document.getElementById('jump-complete').innerText = "You jumped " + totalShake.toString();
             bounceImg(3);
             vibratePhone(500);
-            totalShake = 0;
+            resetCounter = 0;
         }else{
             document.getElementById('jump-complete').innerText="";
-            totalShake++;
+
+
         }
+
         document.getElementById("msg-count").innerText = totalShake.toString();
     }, false);
 
