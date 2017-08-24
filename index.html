@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Comic Character</title>
+    <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="assets/animate.css" rel="stylesheet"/>
+    <script src="js/shake.js"></script>
+    <script src="js/hammer.min.js"></script>
+    <style>
+        body {
+            text-align: center;
+            width: 90%;
+            margin: auto;
+
+            font-family: Calibri, sans-serif;
+            font-size: 2em;
+            background-color: #dedede;
+
+        }
+        #home {
+            margin-top: 20px;
+            padding: 20px 40px 40px 40px;
+            border-radius: 4px;
+            background: #22c1c3; /* fallback for old browsers */
+            background: -webkit-linear-gradient(to right, #fdbb2d, #22c1c3); /* Chrome 10-25, Safari 5.1-6 */
+            background: linear-gradient(to right, #fdbb2d, #22c1c3); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+            box-shadow: 2px 2px 14px 4px #555;
+
+        }
+        #home h1 {
+            font-size: 2em;
+        }
+        #screen {
+            display: none;
+        }
+        #msg {
+        }
+        .person-img {
+            position: relative;
+            -webkit-animation: mymove 3s;  /* Safari 4.0 - 8.0 */
+            -webkit-animation-iteration-count: 3; /* Safari 4.0 - 8.0 */
+            animation: mymove 1s;
+            animation-iteration-count: 3;
+        }
+        @-webkit-keyframes mymove {
+            from {top: 0px;}
+            to {top: -20px;}
+        }
+
+        @keyframes mymove {
+            from {top: 0px;}
+            to {top: -20px;}
+        }
+
+    </style>
+</head>
+<body>
+<div id="home" class="animated pulse">
+    <h1>
+        Comic Jump
+    </h1>
+    <p>Swipe left to start game</p>
+</div>
+<div id="screen">
+    <h2>Start to jump</h2>
+    <p id="msg">
+        Total jump(s): <span id="msg-count"></span>
+    </p>
+    <p id="jump-complete">
+
+    </p>
+    <div id="me">
+
+    </div>
+    <img id="person-img"  height="250" width="200" src="assets/person1.svg" alt="person"/>
+</div>
+</body>
+<script>
+    var myElement = document.getElementById('home');
+    var hammertime = new Hammer(myElement);
+    hammertime.on('panleft', function (ev) {
+        document.getElementById("home").className = "animated fadeOutLeft";
+        setTimeout(animate2Screen, 200);
+    });
+
+    var animate2Screen = function () {
+        document.getElementById('home').style.display = "none";
+        document.getElementById('screen').style.display = "block";
+        document.getElementById('screen').className = "animated fadeInRight";
+        setTimeout(animatePersonImage, 400);
+
+    }
+    var animatePersonImage = function () {
+        document.getElementById('person-img').className = "animated pulse";
+    }
+
+    var totalShake = 0;
+
+    var shakeEvent = new Shake({threshold: 15});
+    shakeEvent.start();
+    window.addEventListener('shake', function () {
+        if(totalShake === 3){
+            document.getElementById('person-img').className = "animated shake";
+            document.getElementById('jump-complete').innerText = "You jumped " + totalShake.toString();
+            bounceImg(3);
+            vibratePhone(500);
+            totalShake = 0;
+        }else{
+            document.getElementById('jump-complete').innerText="";
+            totalShake++;
+        }
+        document.getElementById("msg-count").innerText = totalShake.toString();
+    }, false);
+
+    var vibratePhone = function(time){
+        if ("vibrate" in navigator) {
+            navigator.vibrate = navigator.vibrate || navigator.webkitVibrate || navigator.mozVibrate || navigator.msVibrate;
+            if (navigator.vibrate) {
+                navigator.vibrate(time);
+            }
+        }
+
+    }
+
+    var bounceImg = function (counter) {
+        document.getElementById('person-img').className = "person-img";
+        setTimeout(function(){
+            document.getElementById('person-img').className = "";
+        }, 2800);
+
+    }
+
+
+
+    //stop listening
+    function stopShake() {
+        shakeEvent.stop();
+    }
+
+    if (!("ondevicemotion" in window)) {
+        alert("Not Supported");
+    }
+
+
+    //orientation part
+
+    var supportsOrientationChange = "onorientationchange" in window,
+            orientationEvent = supportsOrientationChange ? "orientationchange" : "resize";
+
+    window.addEventListener(orientationEvent, function () {
+        document.getElementById("orientation").innerText = ('MODE: ' + window.orientation + " width: " + screen.width);
+    }, false);
+</script>
+</html>
